@@ -19,7 +19,7 @@ az login
 git clone https://github.com/joergjo/azure-blobencryption-samples.git
 cd ./azure-blobencryption-samples/dotnet/BlobEncryptionKeyVault/
 # use any multiple of 4, but 4 MB suffice
-dd if=/dev/urandom of=random_data_file.bin bs=1M count=4
+dd if=/dev/urandom of=random_file.bin bs=1M count=4
 
 dotnet run
 diff random_file.bin random_file_copy.bin 
