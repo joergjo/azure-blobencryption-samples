@@ -1,6 +1,11 @@
 # Using this sample
 
-Requires Azure CLI, .NET 8, either JDK 17 or JDK 21, and Maven.
+Requires 
+- Azure CLI, 
+- .NET 8, 
+- JDK 17 or JDK 21
+- Maven
+- macOS/Linux/WSL2
 
 See https://learn.microsoft.com/en-us/azure/storage/blobs/storage-encrypt-decrypt-blobs-key-vault?tabs=roles-azure-portal%2Cpackages-dotnetcli#assign-a-role-to-your-microsoft-entra-user to prepare the required Azure resources
 and grant your user access to Key Vault and Blob Storage.
