@@ -1,5 +1,8 @@
 package example.com;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import com.azure.core.cryptography.AsyncKeyEncryptionKey;
 import com.azure.identity.DefaultAzureCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
@@ -8,6 +11,7 @@ import com.azure.security.keyvault.keys.KeyClientBuilder;
 import com.azure.security.keyvault.keys.cryptography.KeyEncryptionKeyClientBuilder;
 import com.azure.security.keyvault.keys.cryptography.models.KeyWrapAlgorithm;
 import com.azure.security.keyvault.keys.models.KeyVaultKey;
+import com.azure.storage.blob.models.BlobStorageException;
 import com.azure.storage.blob.specialized.cryptography.EncryptedBlobClient;
 import com.azure.storage.blob.specialized.cryptography.EncryptedBlobClientBuilder;
 import com.azure.storage.blob.specialized.cryptography.EncryptionVersion;
@@ -36,16 +40,29 @@ public class App {
             .block();
 
         String fileName = String.format("%s.bin", blobName);    
-        System.out.println(String.format("Downloading blob to %s", fileName));
         EncryptedBlobClient client = new EncryptedBlobClientBuilder(EncryptionVersion.V2)
-            .key(akek, KeyWrapAlgorithm.RSA_OAEP.toString())
-            .credential(tokenCredential)
-            .endpoint(endpoint)
-            .containerName(containerName)
-            .blobName(blobName)
-            .buildEncryptedBlobClient();
-        client.downloadToFile(fileName, true);
-        System.out.println(String.format("Downloaded blob to %s", fileName));
+        .key(akek, KeyWrapAlgorithm.RSA_OAEP.toString())
+        .credential(tokenCredential)
+        .endpoint(endpoint)
+        .containerName(containerName)
+        .blobName(blobName)
+        .buildEncryptedBlobClient();
+        System.out.println(String.format("Downloading blob to file %s", fileName));
+        try {
+            client.downloadToFile(fileName, true);
+            System.out.println(String.format("Downloaded blob to file %s", fileName));
+        } catch (BlobStorageException e) {
+            e.printStackTrace();
+        }
+        System.out.println(String.format("Downloading blob to file stream %s", fileName));
+        try (FileOutputStream stream = new FileOutputStream(fileName)) {
+            client.downloadStream(stream);
+            stream.flush();
+            System.out.println(String.format("Downloaded blob to file stream %s", fileName));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
